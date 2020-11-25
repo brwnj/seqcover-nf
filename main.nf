@@ -1,5 +1,47 @@
 nextflow.enable.dsl=2
 
+params.help = false
+if (params.help) {
+    log.info """
+    -----------------------------------------------------------------------
+
+    seqcover-nf
+    ===========
+
+    Documentation and issues can be found at:
+    https://github.com/brwnj/seqcover-nf
+
+    seqcover is available at:
+    https://github.com/brentp/seqcover
+
+    Required arguments:
+    -------------------
+    --crams               Aligned sequences in .bam and/or .cram format.
+                          Indexes (.bai/.crai) must be present.
+    --reference           Reference FASTA. Index (.fai) must exist in same
+                          directory.
+    --genes               Comma separated list of genes across which to
+                          show coverage, e.g. "PIGA,KCNQ2,ARX,DNM1,SLC25A22,CDKL5".
+
+    Options:
+    --------
+    --outdir              Base results directory for output.
+                          Default: '/.results'
+    --cpus                Number of cpus dedicated to `mosdepth` calls.
+                          Default: 4
+    --percentile          Background percentile used in seqcover report.
+                          More info is available at:
+                          https://github.com/brentp/seqcover#outlier
+                          Default: 5
+    --opts                Additional options to send to seqcover report,
+                          e.g. "--hg19".
+                          Default: ""
+
+    -----------------------------------------------------------------------
+    """.stripIndent()
+    exit 0
+}
+
 params.crams = false
 params.reference = false
 params.outdir = './results'
