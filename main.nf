@@ -33,9 +33,6 @@ if (params.help) {
                           More info is available at:
                           https://github.com/brentp/seqcover#outlier
                           Default: 5
-    --opts                Additional options to send to seqcover report,
-                          e.g. "--hg19".
-                          Default: ""
 
     -----------------------------------------------------------------------
     """.stripIndent()
@@ -48,7 +45,7 @@ params.outdir = './results'
 params.cpus = 4
 params.percentile = 5
 params.genes = false
-params.opts = false
+params.hg19 = false
 
 if(!params.crams) {
     exit 1, "--crams argument like '/path/to/*.cram' is required"
@@ -110,19 +107,20 @@ process seqcover_report {
     path(background)
     path(reference)
     val(genes)
-    val(opts)
+    val(hg19)
 
     output:
     path("*.html"), emit: html
 
     script:
+    genome_flag = hg19 ? "--hg19" : ""
     """
-    seqcover report --background $background --genes $genes --fasta $reference $opts $d4
+    seqcover report --fasta $reference --background $background --genes $genes $genome_flag $d4
     """
 }
 
 workflow {
     mosdepth(crams, crais, params.reference)
     seqcover_background(mosdepth.output.d4.collect(), params.reference, params.percentile)
-    seqcover_report(mosdepth.output.d4.collect(), seqcover_background.output.d4, params.reference, params.genes, params.opts)
+    seqcover_report(mosdepth.output.d4.collect(), seqcover_background.output.d4, params.reference, params.genes, params.hg19)
 }
