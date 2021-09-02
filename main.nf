@@ -114,13 +114,18 @@ process seqcover_report {
 
     script:
     genome_flag = hg19 ? "--hg19" : ""
+    b = background ? "--background ${background}" : ""
     """
-    seqcover report --fasta $reference --background $background --genes $genes $genome_flag $d4
+    seqcover report --fasta $reference $b --genes $genes $genome_flag $d4
     """
 }
 
 workflow {
     mosdepth(crams, crais, params.reference)
-    seqcover_background(mosdepth.output.d4.collect(), params.reference, params.percentile)
-    seqcover_report(mosdepth.output.d4.collect(), seqcover_background.output.d4, params.reference, params.genes, params.hg19)
+    if (crams.count() > 4) {
+        seqcover_background(mosdepth.output.d4.collect(), params.reference, params.percentile)
+        seqcover_report(mosdepth.output.d4.collect(), seqcover_background.output.d4, params.reference, params.genes, params.hg19)
+    } else {
+        seqcover_report(mosdepth.output.d4.collect(), [], params.reference, params.genes, params.hg19)
+    }
 }
