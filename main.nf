@@ -122,7 +122,11 @@ process seqcover_report {
 
 workflow {
     mosdepth(crams, crais, params.reference)
-    if (crams.count().val > 4) {
+    num_crams = 0
+    crams.count().map {
+        num_crams = it
+    }
+    if (num_crams > 4) {
         seqcover_background(mosdepth.output.d4.collect(), params.reference, params.percentile)
         seqcover_report(mosdepth.output.d4.collect(), seqcover_background.output.d4, params.reference, params.genes, params.hg19)
     } else {
