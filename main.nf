@@ -62,7 +62,6 @@ crais = crams.map { it -> it + ("${it}".endsWith('.cram') ? '.crai' : '.bai') }
 
 
 process mosdepth {
-    container "brwnj/seqcover-nf:v0.1.0"
     publishDir "${params.outdir}/mosdepth"
     cpus params.cpus
 
@@ -81,7 +80,6 @@ process mosdepth {
 }
 
 process seqcover_background {
-    container "brwnj/seqcover-nf:v0.1.0"
     publishDir params.outdir
 
     input:
@@ -99,7 +97,6 @@ process seqcover_background {
 }
 
 process seqcover_report {
-    container "brwnj/seqcover-nf:v0.1.0"
     publishDir params.outdir
 
     input:
